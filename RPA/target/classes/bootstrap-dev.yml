@@ -1,0 +1,2 @@
+chromeConfig:
+  driverPath: /lib/ChromeDriver/chromedriver.exe
