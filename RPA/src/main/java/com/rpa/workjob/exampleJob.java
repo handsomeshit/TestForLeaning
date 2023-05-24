@@ -185,7 +185,7 @@ public class exampleJob extends RootJobWorker {
     }
 
     /**
-     * 测试关闭当前页和关闭驱动程序
+     * 测试切换窗口
      */
     @Test
     public void test12() {
@@ -197,5 +197,16 @@ public class exampleJob extends RootJobWorker {
         //另外一个窗口执行结束后，我们可以通过switchTo()去返回到原先窗口
         driver.switchTo().window(windowHandle);
         driver.quit();  //这个方法一定要调用, 否则驱动会长期存在于内存中无法释放
+    }
+
+    /**
+     * 测试关闭其他窗口
+     */
+    @Test
+    public void test13() {
+        initChrome();
+        driver.get("https://www.baidu.com/");
+        closeOtherTabs();
+        driver.quit();
     }
 }

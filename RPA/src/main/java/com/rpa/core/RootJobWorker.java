@@ -285,6 +285,26 @@ public class RootJobWorker {
     }
 
     /**
+     * 关闭其他标签页
+     */
+    public boolean closeOtherTabs() {
+        try {
+            String windowHandle = driver.getWindowHandle(); //获取当前浏览器窗口句柄
+            Set<String> handles = driver.getWindowHandles();//获取所有窗口句柄
+            for (String handle : handles) {
+                if(!handle.equals(windowHandle)) {
+                    driver.switchTo().window(handle).close();
+                }
+            }
+            driver.switchTo().window(windowHandle);
+        } catch (Exception e) {
+            log.info("关闭其他窗口出错");
+            throw e;
+        }
+        return true;
+    }
+
+    /**
      * 在新标签打开链接
      * @param url
      */
