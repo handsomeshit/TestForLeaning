@@ -100,6 +100,12 @@ public class RootJobWorker {
         return driver;
     }
 
+    /**
+     * 使用指定的谷歌浏览器打开, 防止selenium的驱动和浏览器不兼容, 由于浏览器文件太大, 无法上传到github, 因此需要自行下载对应版本
+     * 同时为了使用该功能需要添加一个额外的用户目录, 详情在resources/tips目录下有操作指引
+     * @param port
+     * @return
+     */
     public ChromeDriver initBuildInChrome(String port) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         try {

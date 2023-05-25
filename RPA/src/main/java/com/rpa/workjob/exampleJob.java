@@ -211,7 +211,7 @@ public class exampleJob extends RootJobWorker {
     }
 
     /**
-     * 测试使用selenium
+     * 测试使用内置的浏览器启动
      */
     @Test
     public void test14() {
