@@ -209,4 +209,19 @@ public class exampleJob extends RootJobWorker {
         closeOtherTabs();
         driver.quit();
     }
+
+    /**
+     * 测试使用selenium
+     */
+    @Test
+    public void test14() {
+        initBuildInChrome("12345");
+        driver.get("https://www.baidu.com/");
+        WebElement kw = driver.findElementById("kw");
+        kw.click();
+        kw.sendKeys("OpenAI");
+        WebElement su = driver.findElementById("su");
+        su.click();
+        driver.quit();  //这个方法一定要调用, 否则驱动会长期存在于内存中无法释放
+    }
 }

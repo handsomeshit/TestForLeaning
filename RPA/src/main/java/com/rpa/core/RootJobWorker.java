@@ -1,6 +1,9 @@
 package com.rpa.core;
 
 import com.rpa.config.RPAConfig;
+import com.rpa.utils.CmdUtil;
+import com.rpa.utils.JNAUtils;
+import com.sun.jna.platform.win32.WinDef;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
@@ -14,9 +17,14 @@ import javax.annotation.Resource;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
+
+import static com.rpa.config.RPAConfig.initRPAConfig;
 
 /**
  * <p>
@@ -30,11 +38,16 @@ import java.util.function.Function;
 public class RootJobWorker {
 
     @Resource
-    protected RPAConfig rpaConfig = new RPAConfig();
+    protected RPAConfig rpaConfig = initRPAConfig();
 
     protected ChromeDriver driver;
 
     protected Actions actions;
+
+    public static void main(String[] args) throws IOException {
+
+
+    }
 
     /**
      * 初始化环境
@@ -86,6 +99,52 @@ public class RootJobWorker {
         actions = new Actions(driver);
         return driver;
     }
+
+    public ChromeDriver initBuildInChrome(String port) {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        try {
+            executorService.submit(() -> {
+                CmdUtil.killPorts(port);
+//                CmdUtil.executeCmd("taskkill /im chrome.exe");
+                String buildInChromePath = rpaConfig.getModuleRootPath() +
+                        File.separator + "ChromeApplication" +
+                        File.separator + "chrome.exe --print-to-pdf --remote-debugging-port=" + port +
+                        " --user-data-dir=" + rpaConfig.getModuleRootPath() +       //这个用户目录似乎一定是要添加的, 否则启动会失败
+                        File.separator + "ChromeApplication" + File.separator + "UserDataForSelenium";
+                CmdUtil.executeCmd(buildInChromePath);
+            });
+        } finally {
+            executorService.shutdown();
+        }
+        if (null == waitGetWinRootElement("Chrome_WidgetWin_1", "新标签页 - Google Chrome", 20)) {
+            WinDef.HWND chrome_widgetWin_1 = waitGetWinRootElement("Chrome_WidgetWin_1", "新标签页 - Google Chrome", 10);
+            if (chrome_widgetWin_1 == null) {
+                log.info("浏览器启动失败,任务退出......");
+                System.exit(-1);
+            }
+        }
+        ClassPathResource resource = new ClassPathResource("\\src\\main\\resources/lib/ChromeDriver/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", resource.getPath());
+        ChromeOptions options = new ChromeOptions();
+        options.setExperimentalOption("debuggerAddress", "127.0.0.1:" + port);
+        driver = new ChromeDriver(options);//实例化
+        driver.manage().window().maximize(); //界面的方式, 最大化窗口, 防止有些元素被隐藏,无界面就不要使用了
+        actions = new Actions(driver);
+        return driver;
+    }
+
+    public WinDef.HWND waitGetWinRootElement(String className, String title, int sceanTime) {
+        long stopTime = System.currentTimeMillis() + sceanTime * 1000;
+        while (System.currentTimeMillis() < stopTime) {
+            sleep(500);
+            WinDef.HWND hwnd = JNAUtils.findHandleByClassNameAndTitle(className, title);
+            if (hwnd != null) {
+                return hwnd;
+            }
+        }
+        return null;
+    }
+
 
     //自行扩展, 从接口中读取,或者从文件中读取都行
     private void proxy(ChromeOptions options, boolean pd) {
