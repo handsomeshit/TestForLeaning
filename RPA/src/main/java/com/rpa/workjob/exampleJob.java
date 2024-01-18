@@ -1,6 +1,8 @@
 package com.rpa.workjob;
 
 import com.rpa.core.RootJobWorker;
+import com.rpa.utils.jna.JNAUtils;
+import com.sun.jna.platform.win32.WinDef;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
@@ -140,7 +142,8 @@ public class exampleJob extends RootJobWorker {
         WebElement su = driver.findElementById("su");
         Actions actions = new Actions(driver);
         actions.contextClick(su).perform(); //右键点击
-        actions.clickAndHold(su).perform(); //左键单击
+        actions.clickAndHold(su).perform(); //左键单击并且不释放
+        actions.release();  //在当前鼠标位置释放按下的鼠标左键。
         actions.doubleClick(su).perform();  //左键双击
         actions.moveToElement(su).perform(); //移动到该元素中间
         actions.contextClick(su).perform(); //右键点击
@@ -223,5 +226,15 @@ public class exampleJob extends RootJobWorker {
         WebElement su = driver.findElementById("su");
         su.click();
         driver.quit();  //这个方法一定要调用, 否则驱动会长期存在于内存中无法释放
+    }
+
+    /**
+     * 测试使用jna工具
+     */
+    @Test
+    public void test15() {
+        //打开任务管理器, 前提是任务管理器已经处于最小化状态
+        WinDef.HWND hwnd = JNAUtils.findHandleByClassNameAndTitle(null, "任务管理器");
+        System.out.println(JNAUtils.showWindow(hwnd));
     }
 }

@@ -2,7 +2,8 @@ package com.rpa.core;
 
 import com.rpa.config.RPAConfig;
 import com.rpa.utils.CmdUtil;
-import com.rpa.utils.JNAUtils;
+import com.rpa.utils.FileUtil;
+import com.rpa.utils.jna.JNAUtils;
 import com.sun.jna.platform.win32.WinDef;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,6 @@ import javax.annotation.Resource;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -43,11 +43,6 @@ public class RootJobWorker {
     protected ChromeDriver driver;
 
     protected Actions actions;
-
-    public static void main(String[] args) throws IOException {
-
-
-    }
 
     /**
      * 初始化环境
@@ -103,8 +98,6 @@ public class RootJobWorker {
     /**
      * 使用指定的谷歌浏览器打开, 防止selenium的驱动和浏览器不兼容, 由于浏览器文件太大, 无法上传到github, 因此需要自行下载对应版本
      * 同时为了使用该功能需要添加一个额外的用户目录, 详情在resources/tips目录下有操作指引
-     * @param port
-     * @return
      */
     public ChromeDriver initBuildInChrome(String port) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -190,7 +183,7 @@ public class RootJobWorker {
         try {
             JavascriptExecutor js = driver;
             log.info("runJScode:" + jscode);
-            return js.executeScript(jscode);
+            return js.executeScript(jscode, w);
         } catch (Exception e) {
             log.info("js执行异常", e);
             return null;
@@ -228,7 +221,7 @@ public class RootJobWorker {
      */
     public WebElement waitLoadElement(By by, long scanTime) {
         long endTime = System.currentTimeMillis() + scanTime;
-        WebElement element = null;
+        WebElement element;
         do {
             sleep(200);
             element = tryFindFirstElement(by);
@@ -443,5 +436,21 @@ public class RootJobWorker {
         }
     }
 
-
+    /**
+     * 点击元素后出现选择下载路径窗口, 保存文件
+     * PS:这种窗体不属于浏览器的控制selenium的控制返回, 需要对窗体的操作方式. 遇到这种情况有以下几种处理方式
+     * 1.获取下载的超链, 通过http请求下载文件, 然后检查本地的文件是否下载成功.int
+     * 2.设置浏览器默认的文件保存目录, 点击下载即可跳过窗体的弹出.
+     * 3.操作窗体
+     */
+    public boolean specifyPathAndSaveFile(String savePath, long sceanTime) {
+        File saveFile = new File(savePath);
+        FileUtil.mkDirs(saveFile.getParent());
+        long startTime = System.currentTimeMillis();
+        WinDef.HWND handle = waitGetWinRootElement(null, "另存为", (int)(sceanTime/1000));
+        if(handle != null) {
+//            if(setWinE)
+        }
+        return true;
+    }
 }
