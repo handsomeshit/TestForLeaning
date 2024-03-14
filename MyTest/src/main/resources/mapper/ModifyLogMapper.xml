@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.junrunrenli.mapper.ModifyLogMapper">
+
+    <resultMap type="com.junrunrenli.domain.entity.ModifyLog" id="BaseResultMap">
+        <id property="id" column="id"/>
+        <result property="operationTable" column="operation_table"/>
+        <result property="operationType" column="operation_type"/>
+        <result property="flowName" column="flow_name"/>
+        <result property="flowNumber" column="flow_number"/>
+        <result property="remark" column="remark"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createdAt"  column="created_at"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="updatedBy" column="updated_by"/>
+        <collection property="modifyLogDetailList" javaType="java.util.List" resultMap="DetailResult"/>
+    </resultMap>
+
+    <resultMap id="DetailResult" type="com.junrunrenli.domain.entity.ModifyLogDetail">
+        <id property="id" column="detail_id"/>
+        <result property="modifyLogId" column="modify_log_id"/>
+        <result property="updateColumn" column="update_column"/>
+        <result property="oldValue" column="old_value"/>
+        <result property="newValue" column="new_value"/>
+    </resultMap>
+
+    <select id="selectModifyLogWithDetailList" resultMap="BaseResultMap"
+            parameterType="com.junrunrenli.domain.dto.ModifyLogPageDTO">
+        SELECT
+            a.id, a.operation_table, a.operation_type, a.flow_name, a.flow_number, a.remark, a.is_deleted, a.created_at, a.created_by, a.updated_at, a.updated_by,
+            b.id AS detail_id, b.modify_log_id, b.update_column, b.old_value, b.new_value
+        FROM
+            modify_log AS a
+        LEFT JOIN
+            modify_log_detail AS b ON a.id = b.modify_log_id
+    </select>
+</mapper>
