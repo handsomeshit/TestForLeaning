@@ -7,7 +7,6 @@ import com.betaTest.contant.enums.ModifyLogEnums;
 import com.betaTest.domain.ModifyLog;
 import com.betaTest.domain.ModifyLogDetail;
 import com.betaTest.domain.ModifyLogPageDTO;
-import com.betaTest.domain.exception.CustomException;
 import com.betaTest.handler.ModifyLogHandler;
 import com.betaTest.mapper.ModifyLogDetailMapper;
 import com.betaTest.mapper.ModifyLogMapper;
@@ -49,7 +48,7 @@ public class ModifyLogServiceImpl<T> implements IModifyLogService<T> {
         List<ModifyLogDetail> logDetailList = modifyLogHandler.compareAndGetResultList(oldObj, newObj);
         if(CollectionUtils.isEmpty(logDetailList)) {
             log.info("此次操作没有数据变更");
-            throw new CustomException("此次操作没有数据变更");
+            return;
         }
         ModifyLog modifyLog = modifyLogHandler.generateModifyLog(null == loginUser ? "admin" : loginUser);
         modifyLogMapper.insert(modifyLog);
@@ -67,7 +66,7 @@ public class ModifyLogServiceImpl<T> implements IModifyLogService<T> {
         List<ModifyLogDetail> logDetailList = modifyLogHandler.compareAndGetResultList(oldObj, newObj);
         if(CollectionUtils.isEmpty(logDetailList)) {
             log.info("此次操作没有数据变更");
-            throw new CustomException("此次操作没有数据变更");
+            return;
         }
         ModifyLog modifyLog = modifyLogHandler.generateModifyLog("admin");
         modifyLogMapper.insert(modifyLog);
