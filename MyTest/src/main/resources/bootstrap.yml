@@ -1,7 +1,0 @@
-server:
-  port: 12001
-spring:
-  application:
-    name: my-test
-  profiles:
-    active: dev

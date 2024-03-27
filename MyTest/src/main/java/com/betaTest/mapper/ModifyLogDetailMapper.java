@@ -2,6 +2,7 @@ package com.betaTest.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.betaTest.domain.ModifyLogDetail;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.betaTest.domain.ModifyLogDetail;
  * @author LMX
  * @since 2023-08-31
  */
+@Mapper
 public interface ModifyLogDetailMapper extends BaseMapper<ModifyLogDetail> {
 
 }

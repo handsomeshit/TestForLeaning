@@ -3,6 +3,7 @@ package com.betaTest.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.betaTest.domain.ModifyLog;
 import com.betaTest.domain.ModifyLogPageDTO;
+import org.apache.ibatis.annotations.Mapper;
 
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
  * @author LMX
  * @since 2023-08-31
  */
+@Mapper
 public interface ModifyLogMapper extends BaseMapper<ModifyLog> {
 
     List<ModifyLog> selectModifyLogWithDetailList(ModifyLogPageDTO modifyLogPageDTO);
