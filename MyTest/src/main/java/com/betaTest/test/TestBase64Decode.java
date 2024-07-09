@@ -1,7 +1,6 @@
 package com.betaTest.test;
 
-import sun.misc.BASE64Decoder;
-
+import java.util.Base64;
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -33,7 +32,8 @@ public class TestBase64Decode {
         if (!file.getParentFile().exists()) {
             file.mkdirs();
         }
-        byte[] buffer = new BASE64Decoder().decodeBuffer(base64Code);
+        Base64.Decoder decoder = Base64.getDecoder();
+        byte[] buffer = decoder.decode(base64Code);
         FileOutputStream out = new FileOutputStream(targetPath);
         out.write(buffer);
         out.close();

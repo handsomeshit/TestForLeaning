@@ -23,7 +23,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @MapperScan("com.betaTest.mapper")
 public class BetaTestApplication {
     public static void main(String[] args) {
-//        sendEmail(args);
+        sendEmail(args);
 //        testModifyLog(args);
     }
 
